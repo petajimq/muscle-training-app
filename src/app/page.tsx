@@ -42,7 +42,7 @@ const generateWorkoutPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 relative">
+    <div className="flex flex-col justify-center items-center min-h-screen p-4 gap-4 relative">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="font-bold text-3xl text-center">筋トレメニュー作成</CardTitle>

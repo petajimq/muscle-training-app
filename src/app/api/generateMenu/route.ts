@@ -1,35 +1,37 @@
-// app/api/generateWorkout/route.ts
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
+// Gemini API クライアントの初期化
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
 export async function POST(req: NextRequest) {
-  const { part, equipment } = await req.json();
+  const { part, trainingItem } = await req.json();
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const prompt = `
+  # 命令
+  あなたは筋トレの専門家です。部位「${part}」を対象に、器具「${trainingItem}」を使った自宅でできるメニューを3〜5個、初心者向けに提案してください。
 
-  const prompt = `あなたは筋トレの専門家です。部位「${part}」を対象に、自宅でできる自重メニュー（器具: ${equipment}）を3〜5個、初心者向けに提案してください。`;
-
+  # 制約事項
+  - 器具の指定がない場合は自重トレーニングを提案すること
+  - 室内でできること
+  - 初心者向けに作成すること
+  - 順番を決めてメニューを作成すること
+  - 順番ごとにナンバリングして見やすく作成すること
+  - 大体10分～15分で終わる内容にすること
+  - 絵文字などを使用して見やすくすること
+  - 出力はMarkdown形式ではなく、プレーンテキストで箇条書きで作成すること。見出し（##や*など）や記号は不要です。
+  - 専門家としての挨拶を入れること（やあ！世界一の筋トレ専門家だよ！みたいな感じ）
+`;
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "あなたはパーソナルトレーナーです。" },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
-
-    const data = await res.json();
-    console.log('🔍 OpenAI API Response:', data); 
-    const content =
-      data.choices?.[0]?.message?.content || "メニューの生成に失敗しました。";
-
-    return NextResponse.json({ result: content });
-  } catch (e: any) {
-    console.error("エラー発生", e);
-    return NextResponse.json({ result: `通信エラー：${e.message}` });
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    console.log(part, trainingItem)
+    return NextResponse.json({ result: text.trim() }, { status: 200 });
+  } catch (err) {
+    console.error("Gemini API Error in API route:", err);
+    return NextResponse.json(
+      { result: "とりあえず腕立て100回!!" },
+      { status: 500 }
+    );
   }
 }
