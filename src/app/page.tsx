@@ -42,7 +42,7 @@ const generateWorkoutPage = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen p-4 gap-4 relative">
+    <div className="bg-dots flex flex-col justify-center items-center min-h-screen p-4 gap-4 relative">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="font-bold text-3xl text-center">筋トレメニュー作成</CardTitle>
@@ -80,6 +80,13 @@ const generateWorkoutPage = () => {
           <Button onClick={generateMenu} className="bg-black hover:bg-gray-500">{loading ? '生成中' : 'メニュー作成'}</Button>
         </CardFooter>
       </Card>
+
+      {loading && (
+        <div className="flex flex-col justify-center items-center text-center mt-4">
+          <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="mt-2">オリジナルのメニュー作成中</div>
+        </div>
+      )}
 
       {result && (
         <div className="mt-4 whitespace-pre-wrap border p-4 rounded bg-gray-100">
