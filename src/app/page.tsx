@@ -4,11 +4,11 @@ import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 //メインページ
-const generateWorkoutPage = () => {
+const GenerateWorkoutPage = () => {
   //トレーニング部位の状態管理
   const [part, setPart] = useState('胸');
   //トレーニング道具の状態管理
@@ -24,7 +24,7 @@ const generateWorkoutPage = () => {
   }
 
   //トレーニング道具の更新
-  const trainingItemChange = (e: any) => {
+  const trainingItemChange = (e:ChangeEvent<HTMLInputElement>) => {
     return setTrainingItem(e.target.value);
   }
 
@@ -103,4 +103,4 @@ const generateWorkoutPage = () => {
   )
 }
 
-export default generateWorkoutPage;
+export default GenerateWorkoutPage;
